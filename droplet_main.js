@@ -2,10 +2,12 @@ var needle = require("needle");
 var os   = require("os");
 var fs = require('fs');
 var sleep = require('sleep');
+var HWconfig = require('./hw1.json');
 
-var ansibleLocation = "~/devops/HW1/ansible";
+var ansibleLocation = HWconfig.ansibleLocation;
+var digitaloceanSSHKey = HWconfig.digitaloceanSSHKey;
 var config = {};
-config.token = "dd8ff05f3b798c730b22810598eec41070abceec36c86853b38829f1d3cbcdad";
+config.token = HWconfig.digitaloceanconfigtoken;
 
 var headers =
 {
@@ -15,7 +17,6 @@ var headers =
 
 var client =
 {
-
 	createDroplet: function (dropletName, region, imageName, onResponse)
 	{
 		var data = 
@@ -25,7 +26,7 @@ var client =
 			"size":"512mb",
 			"image":imageName,
 			// Id to ssh_key already associated with account.
-			"ssh_keys":[1355963],
+			"ssh_keys":[digitaloceanSSHKey],
 			"backups":false,
 			"ipv6":false,
 			"user_data":null,
@@ -49,10 +50,8 @@ var client =
 };
 
 
-
 // #############################################
-// #3 Create an droplet with the specified name, region, and image
-
+// Create an droplet with the specified name, region, and image
 var name = "chpawar-"+ "DevOpsDroplet";
 var region = "nyc1"; // Fill one in from #1
 var image = "13089493"; // Fill one in from #2
@@ -64,15 +63,13 @@ client.createDroplet(name, region, image, function(err, resp, body)
 	// StatusCode 202 - Means server accepted request.
 	if(!err && resp.statusCode == 202)
 	{
-		console.log( JSON.stringify( body, null, 3 ) );
-	}
-	else {
+		//console.log( JSON.stringify( body, null, 3 ) );
 		console.log("Droplet created...");
 		// Write down/copy droplet id.
 		dropletId = body.droplet.id;
 		console.log("Waiting for droplet to get started...");
 		sleep.sleep(80);
-		console.log("Droplet is initiated...Getting details of droplet");
+		console.log("Droplet is up and running...Getting details of droplet");
 
 		// calling API getDropletInfo method
 		client.getDropletInfo(dropletId, function(error, response) 
@@ -84,7 +81,7 @@ client.createDroplet(name, region, image, function(err, resp, body)
 			var ipAddress = "";
 			if( data.droplet )
 			{
-					console.log("Dropletinfo: " + "id:" + data.droplet.id);
+					console.log("Dropletinfo:\n" + "id:" + data.droplet.id);
 					console.log("name:" + data.droplet.name);
 					console.log("memory:" + data.droplet.memory);
 					console.log("disk:" + data.droplet.disk);
@@ -94,18 +91,17 @@ client.createDroplet(name, region, image, function(err, resp, body)
 						console.log("IPv4 address:" + data.droplet.networks.v4[0].ip_address);
 						ipAddress = data.droplet.networks.v4[0].ip_address;
 					}
-					console.log("\n");
 			}
 			// Write down/copy ip address to add in inventory file.
 			var ipAddress = data.droplet.networks.v4[0].ip_address;
 			var inventoryContent = "[Servers]\nnode0 ansible_ssh_host=" + ipAddress
 						+ " ansible_ssh_user=root"
-						+ " ansible_ssh_private_key_file=" + ansibleLocation + "/keys/Node0.key\n";
+						+ " ansible_ssh_private_key_file=" + ansibleLocation + "/keys/node0.key\n";
 			fs.writeFile(ansibleLocation + "/inventory", inventoryContent, function(fileErr) {
 				if(fileErr) {
 			        	return console.log("Error creating inventory file:\n" + fileErr);
 				}
-				console.log("inventory file was created!");
+				console.log("inventory file is created!");
 			});
 		});
 	}

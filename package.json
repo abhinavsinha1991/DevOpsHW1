@@ -1,0 +1,28 @@
+{
+  "name": "devopshw1",
+  "version": "1.0.0",
+  "description": "HW1 for CSC591-DevOps",
+  "main": "aws_main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chetanpawar0989/DevOpsHW1.git"
+  },
+  "keywords": [
+    "ansible",
+    "devops"
+  ],
+  "author": "Chetan Pawar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chetanpawar0989/DevOpsHW1/issues"
+  },
+  "homepage": "https://github.com/chetanpawar0989/DevOpsHW1#readme",
+  "dependencies": {
+    "aws-sdk": "^2.2.2",
+    "needle": "^0.10.0",
+    "sleep": "^3.0.0"
+  }
+}
