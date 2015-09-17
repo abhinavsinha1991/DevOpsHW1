@@ -40,3 +40,4 @@ Thumbs.db
 ################
 /ansible/keys/*
 /hw1.json
+/node_modules
